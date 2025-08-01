@@ -14,6 +14,7 @@ import pt.admiverde.repository.PaymentRepository;
 import pt.admiverde.repository.UserRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -32,88 +33,51 @@ public class ClientController {
     
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        
-        return ResponseEntity.ok(user.get());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+            .body(Map.of(
+                "message", "Área de cliente em manutenção",
+                "status", "maintenance",
+                "estimatedCompletion", "2-3 dias úteis"
+            ));
     }
     
     @GetMapping("/apartments")
     public ResponseEntity<?> getMyApartments() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        
-        List<Apartment> apartments = apartmentRepository.findByOwner(user.get());
-        return ResponseEntity.ok(apartments);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+            .body(Map.of(
+                "message", "Área de cliente em manutenção",
+                "status", "maintenance",
+                "estimatedCompletion", "2-3 dias úteis"
+            ));
     }
     
     @GetMapping("/payments")
     public ResponseEntity<?> getMyPayments() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        
-        List<Apartment> apartments = apartmentRepository.findByOwner(user.get());
-        List<Payment> payments = apartments.stream()
-                .flatMap(apartment -> paymentRepository.findByApartmentOrderByDueDateDesc(apartment).stream())
-                .toList();
-        
-        return ResponseEntity.ok(payments);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+            .body(Map.of(
+                "message", "Área de cliente em manutenção",
+                "status", "maintenance",
+                "estimatedCompletion", "2-3 dias úteis"
+            ));
     }
     
     @GetMapping("/payments/{apartmentId}")
     public ResponseEntity<?> getPaymentsByApartment(@PathVariable Long apartmentId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        
-        Optional<Apartment> apartment = apartmentRepository.findById(apartmentId);
-        if (apartment.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        
-        // Verificar se o apartamento pertence ao usuário
-        if (!apartment.get().getOwner().getId().equals(user.get().getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        
-        List<Payment> payments = paymentRepository.findByApartmentOrderByDueDateDesc(apartment.get());
-        return ResponseEntity.ok(payments);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+            .body(Map.of(
+                "message", "Área de cliente em manutenção",
+                "status", "maintenance",
+                "estimatedCompletion", "2-3 dias úteis"
+            ));
     }
     
     @GetMapping("/payments/pending")
     public ResponseEntity<?> getPendingPayments() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        
-        Optional<User> user = userRepository.findByUsername(username);
-        if (user.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        
-        List<Apartment> apartments = apartmentRepository.findByOwner(user.get());
-        List<Payment> pendingPayments = apartments.stream()
-                .flatMap(apartment -> paymentRepository.findByApartmentAndStatus(apartment, Payment.PaymentStatus.PENDING).stream())
-                .toList();
-        
-        return ResponseEntity.ok(pendingPayments);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+            .body(Map.of(
+                "message", "Área de cliente em manutenção",
+                "status", "maintenance",
+                "estimatedCompletion", "2-3 dias úteis"
+            ));
     }
 } 

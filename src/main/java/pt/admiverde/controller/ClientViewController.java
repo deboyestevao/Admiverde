@@ -10,6 +10,6 @@ public class ClientViewController {
     
     @GetMapping("/dashboard")
     public String dashboard() {
-        return "client/dashboard";
+        return "cliente-manutencao";
     }
 } 

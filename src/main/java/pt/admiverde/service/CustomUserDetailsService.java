@@ -16,11 +16,20 @@ public class CustomUserDetailsService implements UserDetailsService {
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Try to find by email first, then by username
-        User user = userRepository.findByEmail(username)
-                .orElseGet(() -> userRepository.findByUsername(username)
-                        .orElseThrow(() -> new UsernameNotFoundException("User not found with username/email: " + username)));
-        
-        return user;
+        try {
+            // Try to find by username first, then by email
+            User user = userRepository.findByUsername(username)
+                    .orElseGet(() -> userRepository.findByEmail(username)
+                            .orElseThrow(() -> new UsernameNotFoundException("User not found with username/email: " + username)));
+            
+            // Check if user is active
+            if (!user.isEnabled()) {
+                throw new UsernameNotFoundException("User account is disabled: " + username);
+            }
+            
+            return user;
+        } catch (Exception e) {
+            throw new UsernameNotFoundException("Error loading user: " + username, e);
+        }
     }
 } 

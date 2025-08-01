@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Map;
 import java.util.UUID;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -41,15 +42,90 @@ public class AdminController {
     private PasswordEncoder passwordEncoder;
     
     // User Management - Register new clients
-    @PostMapping("/users/register")
+    @PostMapping("/register-client")
     public ResponseEntity<?> registerClient(@RequestBody ClientRegistrationRequest request) {
+        try {
+            // Validate required fields
+            if (request.getFullName() == null || request.getFullName().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Nome completo é obrigatório");
+            }
+            if (request.getAddress() == null || request.getAddress().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Morada é obrigatória");
+            }
+            if (request.getFloorFraction() == null || request.getFloorFraction().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Andar + fração é obrigatório");
+            }
+            if (request.getBuildingId() == null) {
+                return ResponseEntity.badRequest().body("Prédio é obrigatório");
+            }
+            if (request.getNif() == null || request.getNif().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("NIF é obrigatório");
+            }
+            if (request.getInsurancePolicy() == null || request.getInsurancePolicy().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Apólice de seguro é obrigatória");
+            }
+            
+            // Check if NIF already exists
+            if (userRepository.findByNif(request.getNif()).isPresent()) {
+                return ResponseEntity.badRequest().body("NIF já está registado no sistema");
+            }
+            
+            // Get building
+            Building building = buildingRepository.findById(request.getBuildingId())
+                .orElseThrow(() -> new RuntimeException("Prédio não encontrado"));
+            
+            // Generate username from full name
+            String username = generateUsername(request.getFullName());
+            
+            // Generate temporary password
+            String tempPassword = generateTemporaryPassword();
+            
+            // Create user
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(passwordEncoder.encode(tempPassword));
+            user.setFullName(request.getFullName());
+            user.setAddress(request.getAddress());
+            user.setFloorFraction(request.getFloorFraction());
+            user.setBuilding(building);
+            user.setEmail(request.getEmail() != null ? request.getEmail() : "");
+            user.setPhone(request.getPhone());
+            user.setMobile(request.getMobile());
+            user.setNif(request.getNif());
+            user.setInsurancePolicy(request.getInsurancePolicy());
+            user.setRole(User.UserRole.CLIENT);
+            user.setActive(true);
+            
+            User savedUser = userRepository.save(user);
+            
+            // Return response with credentials
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Condómino registado com sucesso");
+            response.put("username", username);
+            response.put("tempPassword", tempPassword);
+            response.put("email", request.getEmail());
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao registar condómino: " + e.getMessage());
+        }
+    }
+    
+    // User Management - Create new users (new format)
+    @PostMapping("/users")
+    public ResponseEntity<?> createUser(@RequestBody CreateUserRequest request) {
         // Check if email already exists
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body("Email já existe");
+            return ResponseEntity.badRequest().body(Map.of("message", "Email já existe"));
         }
         
-        // Generate unique username
-        String baseUsername = request.getFirstName().toLowerCase() + "." + request.getLastName().toLowerCase();
+        // Generate unique username from full name
+        String[] nameParts = request.getFullName().split(" ");
+        String baseUsername = nameParts[0].toLowerCase();
+        if (nameParts.length > 1) {
+            baseUsername += "." + nameParts[nameParts.length - 1].toLowerCase();
+        }
         String username = baseUsername;
         int counter = 1;
         
@@ -58,27 +134,30 @@ public class AdminController {
             counter++;
         }
         
-        // Generate temporary password
-        String tempPassword = UUID.randomUUID().toString().substring(0, 8);
+        // Use provided password or generate temporary password
+        String password = request.getPassword();
+        if (password == null || password.trim().isEmpty()) {
+            password = UUID.randomUUID().toString().substring(0, 8);
+        }
         
         // Create user
         User user = new User();
         user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(tempPassword));
+        user.setPassword(passwordEncoder.encode(password));
         user.setEmail(request.getEmail());
-        user.setFullName(request.getFirstName() + " " + request.getLastName());
-        user.setRole(User.UserRole.CLIENT);
+        user.setFullName(request.getFullName());
+        user.setRole(User.UserRole.valueOf(request.getUserType()));
         
         User savedUser = userRepository.save(user);
         
-        // Return user info for admin to send via email
+        // Return user info
         Map<String, Object> response = Map.of(
             "id", savedUser.getId(),
             "username", username,
-            "tempPassword", tempPassword,
+            "tempPassword", password,
             "email", request.getEmail(),
             "fullName", savedUser.getFullName(),
-            "message", "Utilizador criado com sucesso. Envie as credenciais por email."
+            "message", "Utilizador criado com sucesso"
         );
         
         return ResponseEntity.ok(response);
@@ -117,7 +196,8 @@ public class AdminController {
     // Building Management
     @GetMapping("/buildings")
     public ResponseEntity<List<Building>> getAllBuildings() {
-        return ResponseEntity.ok(buildingRepository.findAll());
+        List<Building> buildings = buildingRepository.findAll();
+        return ResponseEntity.ok(buildings);
     }
     
     @PostMapping("/buildings")
@@ -252,17 +332,79 @@ public class AdminController {
         ));
     }
     
+    private String generateUsername(String fullName) {
+        String baseUsername = fullName.toLowerCase().replaceAll("[^a-z0-9]", ".");
+        String username = baseUsername;
+        int counter = 1;
+        while (userRepository.findByUsername(username).isPresent()) {
+            username = baseUsername + counter;
+            counter++;
+        }
+        return username;
+    }
+
+    private String generateTemporaryPassword() {
+        return UUID.randomUUID().toString().substring(0, 8);
+    }
+
     public static class ClientRegistrationRequest {
-        private String firstName;
-        private String lastName;
+        private String fullName;
+        private String address;
+        private String floorFraction;
+        private Long buildingId;
         private String email;
+        private String phone;
+        private String mobile;
+        private String nif;
+        private String insurancePolicy;
+        private String userType;
         
         // Getters and Setters
-        public String getFirstName() { return firstName; }
-        public void setFirstName(String firstName) { this.firstName = firstName; }
-        public String getLastName() { return lastName; }
-        public void setLastName(String lastName) { this.lastName = lastName; }
+        public String getFullName() { return fullName; }
+        public void setFullName(String fullName) { this.fullName = fullName; }
+        
+        public String getAddress() { return address; }
+        public void setAddress(String address) { this.address = address; }
+        
+        public String getFloorFraction() { return floorFraction; }
+        public void setFloorFraction(String floorFraction) { this.floorFraction = floorFraction; }
+        
+        public Long getBuildingId() { return buildingId; }
+        public void setBuildingId(Long buildingId) { this.buildingId = buildingId; }
+        
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
+        
+        public String getPhone() { return phone; }
+        public void setPhone(String phone) { this.phone = phone; }
+        
+        public String getMobile() { return mobile; }
+        public void setMobile(String mobile) { this.mobile = mobile; }
+        
+        public String getNif() { return nif; }
+        public void setNif(String nif) { this.nif = nif; }
+        
+        public String getInsurancePolicy() { return insurancePolicy; }
+        public void setInsurancePolicy(String insurancePolicy) { this.insurancePolicy = insurancePolicy; }
+        
+        public String getUserType() { return userType; }
+        public void setUserType(String userType) { this.userType = userType; }
+    }
+    
+    public static class CreateUserRequest {
+        private String fullName;
+        private String email;
+        private String password;
+        private String userType;
+        
+        // Getters and Setters
+        public String getFullName() { return fullName; }
+        public void setFullName(String fullName) { this.fullName = fullName; }
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+        public String getUserType() { return userType; }
+        public void setUserType(String userType) { this.userType = userType; }
     }
 } 

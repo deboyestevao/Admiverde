@@ -24,7 +24,12 @@ public class UserService {
     }
     
     public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        // Try to find by username first, then by email
+        Optional<User> userByUsername = userRepository.findByUsername(username);
+        if (userByUsername.isPresent()) {
+            return userByUsername;
+        }
+        return userRepository.findByEmail(username);
     }
     
     public Optional<User> findByEmail(String email) {

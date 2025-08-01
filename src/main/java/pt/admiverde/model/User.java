@@ -29,11 +29,33 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
     
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
+    
+    @Column(nullable = false)
+    private String address;
+    
+    @Column(name = "floor_fraction", nullable = false)
+    private String floorFraction;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "building_id", nullable = false)
+    private Building building;
+    
     @Column(nullable = false)
     private String email;
     
-    @Column(name = "full_name", nullable = false)
-    private String fullName;
+    @Column
+    private String phone;
+    
+    @Column
+    private String mobile;
+    
+    @Column(nullable = false, unique = true)
+    private String nif;
+    
+    @Column(name = "insurance_policy", nullable = false)
+    private String insurancePolicy;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

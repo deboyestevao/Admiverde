@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import pt.admiverde.model.User;
 import pt.admiverde.service.UserService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,13 +38,13 @@ public class AuthController {
         try {
             // Check if user exists first
             var userOptional = userService.findByUsername(loginRequest.getUsername());
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
-                System.out.println("User found in database: " + user.getFullName() + " (Role: " + user.getRole() + ")");
-            } else {
+            if (userOptional.isEmpty()) {
                 System.out.println("User NOT found in database: " + loginRequest.getUsername());
                 return ResponseEntity.badRequest().body("Utilizador não encontrado.");
             }
+            
+            User user = userOptional.get();
+            System.out.println("User found in database: " + user.getFullName() + " (Role: " + user.getRole() + ")");
             
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -50,18 +55,17 @@ public class AuthController {
             
             SecurityContextHolder.getContext().setAuthentication(authentication);
             
-            // Get user details
-            User user = userService.findByUsername(loginRequest.getUsername()).orElse(null);
-            System.out.println("Authentication successful for user: " + (user != null ? user.getFullName() : "null"));
+            System.out.println("Authentication successful for user: " + user.getFullName());
             
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Login successful");
-            response.put("role", user != null ? user.getRole().toString() : "CLIENT");
-            response.put("username", user != null ? user.getUsername() : loginRequest.getUsername());
-            response.put("fullName", user != null ? user.getFullName() : "");
+            response.put("role", user.getRole().toString());
+            response.put("username", user.getUsername());
+            response.put("fullName", user.getFullName());
             response.put("sessionId", SecurityContextHolder.getContext().getAuthentication().getName());
+            response.put("redirectUrl", user.getRole() == User.UserRole.ADMIN ? "/admin/dashboard" : "/client/dashboard");
             
-            System.out.println("Login successful for user: " + loginRequest.getUsername() + " with role: " + (user != null ? user.getRole() : "CLIENT"));
+            System.out.println("Login successful for user: " + loginRequest.getUsername() + " with role: " + user.getRole());
             System.out.println("=== LOGIN SUCCESS ===");
             return ResponseEntity.ok(response);
             
@@ -71,14 +75,45 @@ public class AuthController {
             System.err.println("Error type: " + e.getClass().getSimpleName());
             System.err.println("Error message: " + e.getMessage());
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("Nome de utilizador ou palavra-passe incorretos.");
+            
+            String errorMessage = "Nome de utilizador ou palavra-passe incorretos.";
+            if (e.getMessage() != null && e.getMessage().contains("User account is disabled")) {
+                errorMessage = "Conta de utilizador desativada. Contacte o administrador.";
+            } else if (e.getMessage() != null && e.getMessage().contains("User not found")) {
+                errorMessage = "Utilizador não encontrado.";
+            }
+            
+            return ResponseEntity.badRequest().body(errorMessage);
         }
     }
     
     @GetMapping("/logout")
-    public ResponseEntity<?> logout() {
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextHolder.clearContext();
-        return ResponseEntity.ok(Map.of("message", "Logout successful"));
+        
+        // Invalidate the session
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        
+        // Clear any cookies
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                cookie.setValue("");
+                cookie.setPath("/");
+                cookie.setMaxAge(0);
+                response.addCookie(cookie);
+            }
+        }
+        
+        // Clear localStorage on client side
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("message", "Logout successful");
+        responseBody.put("redirectUrl", "/");
+        
+        return ResponseEntity.ok(responseBody);
     }
     
     @GetMapping("/session-info")

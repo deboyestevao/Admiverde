@@ -18,8 +18,5 @@ public class AdminViewController {
         return "admin/users";
     }
     
-    @GetMapping("/register-client")
-    public String registerClient() {
-        return "admin/register-client";
-    }
+
 } 

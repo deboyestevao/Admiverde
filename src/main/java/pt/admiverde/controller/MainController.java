@@ -49,4 +49,9 @@ public class MainController {
         }
         return "redirect:/login";
     }
+    
+    @GetMapping("/error")
+    public String error() {
+        return "error";
+    }
 } 
