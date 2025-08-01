@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registar Condómino - Admiverde</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/register-client.css}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admiverde</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/users">Utilizadores</a></li>
+                <li><a href="/admin/register-client" class="active">Registar Condómino</a></li>
+                <li><a href="/admin/buildings">Edifícios</a></li>
+                <li><a href="/admin/apartments">Apartamentos</a></li>
+                <li><a href="/admin/payments">Pagamentos</a></li>
+            </ul>
+        </nav>
+        
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Registar Novo Condómino</h1>
+                <div class="user-menu">
+                    <span>Administrador</span>
+                    <a href="/logout">Sair</a>
+                </div>
+            </header>
+            
+            <div class="register-form">
+                <h2 class="form-title">Dados do Condómino</h2>
+                
+                <form id="registerClientForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">Primeiro Nome *</label>
+                            <input type="text" id="firstName" name="firstName" placeholder="Ex: João" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Último Nome *</label>
+                            <input type="text" id="lastName" name="lastName" placeholder="Ex: Silva" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" placeholder="joao.silva@email.com" required>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span>Registar Condómino</span>
+                        <div class="button-loader">
+                            <div class="spinner"></div>
+                        </div>
+                    </button>
+                </form>
+                
+                <div id="credentialsDisplay" class="credentials-display">
+                    <h3>Credenciais Geradas</h3>
+                    <div class="credential-item">
+                        <strong>Nome de Utilizador:</strong> 
+                        <span id="generatedUsername"></span>
+                        <button class="copy-btn" onclick="copyToClipboard('generatedUsername')">Copiar</button>
+                    </div>
+                    <div class="credential-item">
+                        <strong>Palavra-passe Temporária:</strong> 
+                        <span id="generatedPassword"></span>
+                        <button class="copy-btn" onclick="copyToClipboard('generatedPassword')">Copiar</button>
+                    </div>
+                    <div class="credential-item">
+                        <strong>Email:</strong> 
+                        <span id="userEmail"></span>
+                        <button class="copy-btn" onclick="copyToClipboard('userEmail')">Copiar</button>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.875rem; color: #6b7280;">
+                        <strong>Importante:</strong> Envie estas credenciais por email ao condómino. 
+                        Recomenda-se que o utilizador altere a palavra-passe no primeiro acesso.
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('registerClientForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const buttonText = submitBtn.querySelector('span');
+            const buttonLoader = submitBtn.querySelector('.button-loader');
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                submitBtn.disabled = true;
+                buttonText.style.display = 'none';
+                buttonLoader.style.display = 'flex';
+                
+                const formData = {
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    email: document.getElementById('email').value.trim()
+                };
+                
+                // Clear previous messages
+                clearMessages();
+                
+                try {
+                    const response = await fetch('/api/admin/users/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + localStorage.getItem('token')
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        showSuccess('Condómino registado com sucesso!');
+                        showCredentials(data);
+                        form.reset();
+                    } else {
+                        showError(data.message || 'Erro ao registar condómino');
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    showError('Erro de conexão. Tente novamente.');
+                } finally {
+                    // Reset button
+                    submitBtn.disabled = false;
+                    buttonText.style.display = 'inline';
+                    buttonLoader.style.display = 'none';
+                }
+            });
+        });
+        
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-message';
+            successDiv.textContent = message;
+            
+            const form = document.getElementById('registerClientForm');
+            form.insertBefore(successDiv, form.firstChild);
+        }
+        
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            
+            const form = document.getElementById('registerClientForm');
+            form.insertBefore(errorDiv, form.firstChild);
+        }
+        
+        function clearMessages() {
+            const messages = document.querySelectorAll('.success-message, .error-message');
+            messages.forEach(msg => msg.remove());
+        }
+        
+        function showCredentials(data) {
+            document.getElementById('generatedUsername').textContent = data.username;
+            document.getElementById('generatedPassword').textContent = data.tempPassword;
+            document.getElementById('userEmail').textContent = data.email;
+            document.getElementById('credentialsDisplay').style.display = 'block';
+        }
+        
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                // Show temporary success feedback
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copiado!';
+                btn.style.background = '#059669';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#10b981';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Erro ao copiar: ', err);
+            });
+        }
+    </script>
+</body>
+</html> 

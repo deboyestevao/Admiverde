@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admiverde - Gestão de Condomínios</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#home" class="skip-link">Saltar para o conteúdo principal</a>
+    
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+    </div>
+    
+    <!-- Header -->
+    <header class="header" id="header" role="banner">
+        <div class="header-container">
+            <div class="logo" onclick="scrollToSection('home')" role="button" tabindex="0" aria-label="Ir para o início da página">
+                <h2>Admiverde</h2>
+            </div>
+            <nav class="nav" role="navigation" aria-label="Navegação principal">
+                <ul>
+                    <li><button onclick="scrollToSection('home')" aria-label="Ir para a secção inicial">Home</button></li>
+                    <li><button onclick="scrollToSection('sobre')" aria-label="Ir para a secção sobre nós">Sobre Nós</button></li>
+                    <li><button onclick="scrollToSection('servicos')" aria-label="Ir para a secção de serviços">Serviços</button></li>
+                    <li><button onclick="scrollToSection('porque-escolher')" aria-label="Ir para a secção porquê escolher-nos">Porquê Nós</button></li>
+                    <li><button onclick="scrollToSection('contactos')" aria-label="Ir para a secção de contactos">Contactos</button></li>
+                    <li><a href="/login" class="login-btn" aria-label="Aceder à área de cliente">Área Cliente</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>Admiverde</h1>
+                <p class="hero-subtitle">Especialistas em Gestão de Condomínios</p>
+                <p class="hero-description">
+                    Transformamos a gestão do seu condomínio com soluções profissionais,
+                    transparentes e eficientes.
+                </p>
+                <div class="hero-buttons">
+                    <button class="cta-button" onclick="scrollToSection('sobre')">
+                        Saber Mais
+                    </button>
+                    <a href="/login" class="login-button">
+                        Área Cliente
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="sobre" class="about">
+        <div class="container">
+            <h2>Sobre Nós</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>
+                        A <strong>Admiverde</strong> é uma empresa especializada em gestão de condomínios,
+                        com mais de 25 anos de experiência no mercado. Localizada em Almada, Portugal,
+                        desde 1995, temos vindo a prestar serviços de excelência na gestão de edifícios
+                        e condomínios.
+                    </p>
+                    <p>
+                        A nossa missão é proporcionar uma gestão transparente, eficiente e profissional,
+                        garantindo o bem-estar e satisfação dos nossos clientes. Trabalhamos com
+                        tecnologia de ponta e uma equipa experiente para oferecer soluções
+                        personalizadas para cada condomínio.
+                    </p>
+                </div>
+                <div class="about-stats">
+                    <div class="stat">
+                        <h3>25+</h3>
+                        <p>Anos de Experiência</p>
+                    </div>
+                    <div class="stat">
+                        <h3>150+</h3>
+                        <p>Condomínios Geridos</p>
+                    </div>
+                    <div class="stat">
+                        <h3>2000+</h3>
+                        <p>Famílias Satisfeitas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicos" class="services">
+        <div class="container">
+            <h2>Os Nossos Serviços</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon service-icon-building"></div>
+                    <h3>Gestão de Edifícios</h3>
+                    <p>Gestão completa de edifícios residenciais e comerciais, incluindo manutenção, limpeza e segurança.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon service-icon-chart"></div>
+                    <h3>Gestão Financeira</h3>
+                    <p>Controlo rigoroso das contas, orçamentos, cobrança de quotas e prestação de contas transparente.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon service-icon-communication"></div>
+                    <h3>Comunicação</h3>
+                    <p>Canais de comunicação eficientes entre condóminos, administração e fornecedores de serviços.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon service-icon-maintenance"></div>
+                    <h3>Manutenção</h3>
+                    <p>Planeamento e execução de obras de manutenção preventiva e corretiva em edifícios.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon service-icon-meeting"></div>
+                    <h3>Assembleias</h3>
+                    <p>Organização e gestão de assembleias de condóminos, incluindo convocatórias e atas.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon service-icon-legal"></div>
+                    <h3>Assessoria Jurídica</h3>
+                    <p>Apoio jurídico especializado em questões condominiais e legislação aplicável.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Section -->
+    <section id="porque-escolher" class="why-choose">
+        <div class="container">
+            <h2>Porquê Escolher a Admiverde</h2>
+            <div class="reasons-grid">
+                <div class="reason-card">
+                    <div class="reason-icon reason-icon-experience"></div>
+                    <h3>Experiência Comprovada</h3>
+                    <p>Mais de 25 anos no mercado com um histórico de sucesso na gestão de condomínios.</p>
+                </div>
+                <div class="reason-card">
+                    <div class="reason-icon reason-icon-transparency"></div>
+                    <h3>Transparência Total</h3>
+                    <p>Relatórios detalhados e acesso online às informações do seu condomínio em tempo real.</p>
+                </div>
+                <div class="reason-card">
+                    <div class="reason-icon reason-icon-technology"></div>
+                    <h3>Tecnologia Avançada</h3>
+                    <p>Portal online moderno para gestão de condomínios com acesso 24/7.</p>
+                </div>
+                <div class="reason-card">
+                    <div class="reason-icon reason-icon-support"></div>
+                    <h3>Suporte Personalizado</h3>
+                    <p>Equipa dedicada e disponível para responder às suas necessidades específicas.</p>
+                </div>
+                <div class="reason-card">
+                    <div class="reason-icon reason-icon-local"></div>
+                    <h3>Presença Local</h3>
+                    <p>Empresa local em Almada, com conhecimento profundo da região e mercado.</p>
+                </div>
+                <div class="reason-card">
+                    <div class="reason-icon reason-icon-certification"></div>
+                    <h3>Certificações</h3>
+                    <p>Empresa certificada e em conformidade com todas as regulamentações do setor.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contactos" class="contact">
+        <div class="container">
+            <h2>Contactos</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <h3>Morada</h3>
+                        <p>Rua Principal, 123<br>2800-000 Almada<br>Portugal</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Telefone</h3>
+                        <p>+351 212 123 456<br>+351 912 345 678 (Emergência)</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Email</h3>
+                        <p>geral@admiverde.pt<br>emergencia@admiverde.pt</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Horário</h3>
+                        <p>Segunda a Sexta: 9h-18h<br>Sábado: 9h-13h</p>
+                    </div>
+                    <div class="contact-item">
+                        <h3>Áreas de Atuação</h3>
+                        <p>Almada, Seixal, Barreiro,<br>Setúbal e arredores</p>
+                    </div>
+                </div>
+                <div class="contact-map">
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5000!2d-9.1584!3d38.6795!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzjCsDQwJzQ2LjIiTiA5wrAwOSczMC4yIlc!5e0!3m2!1spt-PT!2spt!4v1234567890"
+                            width="100%" 
+                            height="300" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>Envie-nos uma Mensagem</h3>
+                    <form role="form" aria-label="Formulário de contacto">
+                        <div class="form-group">
+                            <label for="name" class="sr-only">Nome completo</label>
+                            <input type="text" id="name" placeholder="Nome completo" required aria-required="true">
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="sr-only">Email</label>
+                            <input type="email" id="email" placeholder="Email" required aria-required="true">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone" class="sr-only">Telefone</label>
+                            <input type="tel" id="phone" placeholder="Telefone" aria-describedby="phone-help">
+                        </div>
+                        <div class="form-group">
+                            <label for="service" class="sr-only">Serviço</label>
+                            <select id="service" required aria-required="true">
+                                <option value="">Selecione um serviço</option>
+                                <option value="gestao">Gestão de Edifícios</option>
+                                <option value="financeira">Gestão Financeira</option>
+                                <option value="manutencao">Manutenção</option>
+                                <option value="assembleias">Assembleias</option>
+                                <option value="juridica">Assessoria Jurídica</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message" class="sr-only">Mensagem</label>
+                            <textarea id="message" placeholder="Mensagem" rows="5" required aria-required="true"></textarea>
+                        </div>
+                        <button type="submit" class="submit-button" aria-label="Enviar mensagem">Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Admiverde</h3>
+                    <p>Especialistas em gestão de condomínios desde 1995. Transformamos a gestão do seu condomínio com soluções profissionais e transparentes.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Serviços</h4>
+                    <ul>
+                        <li>Gestão de Edifícios</li>
+                        <li>Gestão Financeira</li>
+                        <li>Manutenção</li>
+                        <li>Assembleias</li>
+                        <li>Assessoria Jurídica</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contactos</h4>
+                    <ul>
+                        <li>Rua Principal, 123</li>
+                        <li>2800-000 Almada</li>
+                        <li>+351 212 123 456</li>
+                        <li>geral@admiverde.pt</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Área Cliente</h4>
+                    <ul>
+                        <li><a href="/login">Login</a></li>
+                        <li><a href="/login">Portal Cliente</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Admiverde. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <!-- Back to top button -->
+    <button id="backToTop" class="back-to-top" onclick="scrollToTop()">
+        ↑
+    </button>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html> 

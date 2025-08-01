@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrador - Admiverde</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}">
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9,22 9,12 15,12 15,22"/>
+                    </svg>
+                    Admiverde
+                </h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="/admin/dashboard" class="active">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/users">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        Utilizadores
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/register-client">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="8.5" cy="7" r="4"/>
+                            <line x1="20" y1="8" x2="20" y2="14"/>
+                            <line x1="23" y1="11" x2="17" y2="11"/>
+                        </svg>
+                        Registar Condómino
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/buildings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9,22 9,12 15,12 15,22"/>
+                        </svg>
+                        Edifícios
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/apartments">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="9" y1="9" x2="15" y2="9"/>
+                            <line x1="9" y1="12" x2="15" y2="12"/>
+                            <line x1="9" y1="15" x2="15" y2="15"/>
+                        </svg>
+                        Apartamentos
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/payments">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                            <line x1="1" y1="10" x2="23" y2="10"/>
+                        </svg>
+                        Pagamentos
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>Dashboard Administrador</h1>
+                <div class="user-menu">
+                    <span id="adminName">Administrador</span>
+                    <a href="/logout">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16,17 21,12 16,7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        Sair
+                    </a>
+                </div>
+            </header>
+            
+            <div class="dashboard-content">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-buildings">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9,22 9,12 15,12 15,22"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalBuildings">0</h3>
+                            <p>Edifícios</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-apartments">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="9" y1="9" x2="15" y2="9"/>
+                                <line x1="9" y1="12" x2="15" y2="12"/>
+                                <line x1="9" y1="15" x2="15" y2="15"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalApartments">0</h3>
+                            <p>Apartamentos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-users">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Utilizadores</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-payments">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                <line x1="1" y1="10" x2="23" y2="10"/>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalPayments">0</h3>
+                            <p>Pagamentos</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Financial Overview -->
+                <div class="financial-overview">
+                    <div class="overview-card">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12,6 12,12 16,14"/>
+                            </svg>
+                            Pagamentos Pendentes
+                        </h3>
+                        <div class="overview-content">
+                            <div class="overview-stat">
+                                <span class="stat-number" id="pendingPayments">0</span>
+                                <span class="stat-label">Pagamentos</span>
+                            </div>
+                            <div class="overview-amount">
+                                <span class="amount" id="totalPendingAmount">€0,00</span>
+                                <span class="label">Valor Total</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="overview-card">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            Pagamentos Vencidos
+                        </h3>
+                        <div class="overview-content">
+                            <div class="overview-stat">
+                                <span class="stat-number" id="overduePayments">0</span>
+                                <span class="stat-label">Pagamentos</span>
+                            </div>
+                            <div class="overview-amount">
+                                <span class="amount overdue" id="totalOverdueAmount">€0,00</span>
+                                <span class="label">Valor Total</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/>
+                        </svg>
+                        Ações Rápidas
+                    </h3>
+                    <div class="actions-grid">
+                        <a href="/admin/register-client" class="action-card">
+                            <div class="action-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="8.5" cy="7" r="4"/>
+                                    <line x1="20" y1="8" x2="20" y2="14"/>
+                                    <line x1="23" y1="11" x2="17" y2="11"/>
+                                </svg>
+                            </div>
+                            <h4>Registar Condómino</h4>
+                            <p>Adicionar novo condómino ao sistema</p>
+                        </a>
+                        
+                        <a href="/admin/buildings" class="action-card">
+                            <div class="action-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9,22 9,12 15,12 15,22"/>
+                                </svg>
+                            </div>
+                            <h4>Gerir Edifícios</h4>
+                            <p>Adicionar ou editar edifícios</p>
+                        </a>
+                        
+                        <a href="/admin/payments" class="action-card">
+                            <div class="action-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                    <line x1="1" y1="10" x2="23" y2="10"/>
+                                </svg>
+                            </div>
+                            <h4>Gerir Pagamentos</h4>
+                            <p>Ver e gerir pagamentos</p>
+                        </a>
+                        
+                        <a href="/admin/users" class="action-card">
+                            <div class="action-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </div>
+                            <h4>Gerir Utilizadores</h4>
+                            <p>Ver e editar utilizadores</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>A carregar dados...</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard admin loaded');
+            
+            // Check authentication first
+            checkAuthentication();
+            
+            // Load user info
+            const fullName = localStorage.getItem('fullName');
+            if (fullName) {
+                document.getElementById('adminName').textContent = fullName;
+            }
+            
+            // Load dashboard stats
+            loadDashboardStats();
+        });
+        
+        async function checkAuthentication() {
+            console.log('Checking authentication...');
+            try {
+                const response = await fetch('/api/auth/check-auth', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Auth check response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Auth check response data:', data);
+                    
+                    if (data.authenticated && data.role === 'ADMIN') {
+                        console.log('Admin authenticated:', data.fullName);
+                        // Update user info in localStorage
+                        localStorage.setItem('userRole', data.role);
+                        localStorage.setItem('username', data.username);
+                        localStorage.setItem('fullName', data.fullName);
+                        
+                        // Update display name
+                        if (data.fullName) {
+                            document.getElementById('adminName').textContent = data.fullName;
+                        }
+                    } else {
+                        console.log('User not admin or not authenticated, redirecting to login');
+                        console.log('Role:', data.role);
+                        console.log('Authenticated:', data.authenticated);
+                        window.location.href = '/login';
+                    }
+                } else {
+                    console.log('Auth check failed with status:', response.status);
+                    const errorData = await response.json();
+                    console.log('Error data:', errorData);
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                window.location.href = '/login';
+            }
+        }
+        
+        async function loadDashboardStats() {
+            console.log('Loading dashboard stats...');
+            showLoading();
+            
+            try {
+                const response = await fetch('/api/admin/dashboard/stats', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Stats response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Dashboard stats:', data);
+                    
+                    // Update stats with animation
+                    animateNumber('totalBuildings', data.totalBuildings);
+                    animateNumber('totalApartments', data.totalApartments);
+                    animateNumber('totalUsers', data.totalUsers);
+                    animateNumber('totalPayments', data.totalPayments);
+                    
+                    // Update financial overview
+                    animateNumber('pendingPayments', data.pendingPayments);
+                    animateNumber('overduePayments', data.overduePayments);
+                    
+                    // Update amounts
+                    document.getElementById('totalPendingAmount').textContent = formatCurrency(data.totalPendingAmount);
+                    document.getElementById('totalOverdueAmount').textContent = formatCurrency(data.totalOverdueAmount);
+                } else {
+                    console.error('Failed to load dashboard stats:', response.status);
+                    if (response.status === 401) {
+                        console.log('Unauthorized, redirecting to login');
+                        window.location.href = '/login';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        function animateNumber(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 1000;
+            const startTime = performance.now();
+            
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                element.textContent = currentValue;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+            
+            requestAnimationFrame(updateNumber);
+        }
+        
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('pt-PT', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(amount);
+        }
+        
+        function showLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'flex';
+            }
+        }
+        
+        function hideLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.style.display = 'none';
+            }
+        }
+        
+        // Add hover effects for action cards
+        document.querySelectorAll('.action-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+        
+        // Add click effects for stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'translateY(-2px) scale(1.02)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-4px) scale(1)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html> 
